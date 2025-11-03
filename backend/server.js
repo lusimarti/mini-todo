@@ -12,9 +12,6 @@ app.use(bodyParser.json());
 
 // Serve frontend
 app.use(express.static(path.join(__dirname, 'frontend')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
-});
 
 // Tasks API
 let tasks = [];
@@ -36,6 +33,11 @@ app.delete('/tasks/:id', (req, res) => {
   const { id } = req.params;
   tasks = tasks.filter(t => t.id !== id);
   res.json({ success: true });
+});
+
+// Serve index.html for frontend routes safely
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 
 app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
