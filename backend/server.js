@@ -1,38 +1,41 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid');
-const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
 
-// ✅ Serve frontend from ../frontend
-app.use(express.static(path.join(__dirname, '../frontend')));
+// Serve frontend
+app.use(express.static(path.join(__dirname, 'frontend')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+});
 
+// Tasks API
 let tasks = [];
 
-// API routes
 app.get('/tasks', (req, res) => res.json(tasks));
 app.post('/tasks', (req, res) => {
-    const { text, done } = req.body;
-    const newTask = { id: uuidv4(), text, done };
-    tasks.push(newTask);
-    res.json(newTask);
+  const { text, done } = req.body;
+  const newTask = { id: uuidv4(), text, done };
+  tasks.push(newTask);
+  res.json(newTask);
 });
 app.patch('/tasks/:id', (req, res) => {
-    const { id } = req.params;
-    const { done } = req.body;
-    tasks = tasks.map(task => task.id === id ? { ...task, done } : task);
-    res.json({ success: true });
+  const { id } = req.params;
+  const { done } = req.body;
+  tasks = tasks.map(t => t.id === id ? { ...t, done } : t);
+  res.json({ success: true });
 });
 app.delete('/tasks/:id', (req, res) => {
-    const { id } = req.params;
-    tasks = tasks.filter(task => task.id !== id);
-    res.json({ success: true });
+  const { id } = req.params;
+  tasks = tasks.filter(t => t.id !== id);
+  res.json({ success: true });
 });
 
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));

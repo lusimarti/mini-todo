@@ -4,15 +4,154 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mini ToDo App</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    #todoApp {
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 5px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .delete-btn {
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
+  <!-- Language Switcher -->
+  <div style="text-align: right; padding: 10px;">
+    <select onchange="changeLanguage(this.value)">
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+      <option value="de">Deutsch</option>
+      <option value="ru">Русский</option>
+    </select>
+  </div>
+
   <div id="todoApp">
-    <h2>Mini ToDo App</h2>
+    <h2 id="appTitle">Mini ToDo App</h2>
     <input type="text" id="taskInput" placeholder="New task">
-    <button onclick="addTask()">Add Task</button>
+    <button onclick="addTask()" id="addButton">Add Task</button>
     <ul id="taskList"></ul>
   </div>
-  <script src="app.js"></script>
+
+  <script>
+    // Multi-language translations for Todo App
+    const translations = {
+      en: {
+        appTitle: "Mini ToDo App",
+        taskPlaceholder: "New task",
+        addButton: "Add Task",
+        deleteButton: "Delete",
+        noTasks: "No tasks yet. Add your first task!"
+      },
+      fr: {
+        appTitle: "Mini Application ToDo",
+        taskPlaceholder: "Nouvelle tâche",
+        addButton: "Ajouter Tâche",
+        deleteButton: "Supprimer",
+        noTasks: "Aucune tâche pour le moment. Ajoutez votre première tâche!"
+      },
+      de: {
+        appTitle: "Mini ToDo App",
+        taskPlaceholder: "Neue Aufgabe",
+        addButton: "Aufgabe Hinzufügen",
+        deleteButton: "Löschen",
+        noTasks: "Noch keine Aufgaben. Fügen Sie Ihre erste Aufgabe hinzu!"
+      },
+      ru: {
+        appTitle: "Мини ToDo Приложение",
+        taskPlaceholder: "Новая задача",
+        addButton: "Добавить Задачу",
+        deleteButton: "Удалить",
+        noTasks: "Пока нет задач. Добавьте свою первую задачу!"
+      }
+    };
+
+    // Function to change language
+    function changeLanguage(lang) {
+      document.getElementById('appTitle').textContent = translations[lang].appTitle;
+      document.getElementById('taskInput').placeholder = translations[lang].taskPlaceholder;
+      document.getElementById('addButton').textContent = translations[lang].addButton;
+      
+      // Update existing task delete buttons
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.textContent = translations[lang].deleteButton;
+      });
+      
+      // Update "no tasks" message if shown
+      const taskList = document.getElementById('taskList');
+      if (taskList.innerHTML.includes('No tasks yet') || 
+          taskList.innerHTML.includes('Aucune tâche') ||
+          taskList.innerHTML.includes('Noch keine Aufgaben') ||
+          taskList.innerHTML.includes('Пока нет задач')) {
+        taskList.innerHTML = `<li>${translations[lang].noTasks}</li>`;
+      }
+    }
+
+    let tasks = [];
+
+    function addTask() {
+      const taskInput = document.getElementById('taskInput');
+      const taskText = taskInput.value.trim();
+      
+      if (taskText === '') return;
+      
+      tasks.push(taskText);
+      taskInput.value = '';
+      renderTasks();
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      renderTasks();
+    }
+
+    function renderTasks() {
+      const taskList = document.getElementById('taskList');
+      const currentLang = document.querySelector('select').value;
+      
+      if (tasks.length === 0) {
+        taskList.innerHTML = `<li>${translations[currentLang].noTasks}</li>`;
+        return;
+      }
+      
+      taskList.innerHTML = '';
+      tasks.forEach((task, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span>${task}</span>
+          <button class="delete-btn" onclick="deleteTask(${index})">${translations[currentLang].deleteButton}</button>
+        `;
+        taskList.appendChild(li);
+      });
+    }
+
+    // Initialize
+    renderTasks();
+  </script>
 </body>
 </html>
