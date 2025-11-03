@@ -10,10 +10,10 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// Serve frontend
+// Serve frontend files
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-// Tasks API
+// API routes
 let tasks = [];
 
 app.get('/tasks', (req, res) => res.json(tasks));
@@ -35,8 +35,8 @@ app.delete('/tasks/:id', (req, res) => {
   res.json({ success: true });
 });
 
-// Serve index.html for frontend routes safely
-app.get(/.*/, (req, res) => {
+// Always serve index.html for frontend routes
+app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend', 'index.html'));
 });
 
