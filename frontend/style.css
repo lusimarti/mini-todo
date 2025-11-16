@@ -20,12 +20,18 @@ h2 {
   margin-bottom: 20px;
 }
 
-input[type="text"] {
-  width: 70%;
+
+.input-container {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+
+#taskInput {
+  flex: 1;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
-  margin-right: 5px;
 }
 
 button {
