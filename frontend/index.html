@@ -18,14 +18,14 @@
     </select>
   </div>
 
-<div id="todoApp">
-  <h2 id="appTitle">Mini ToDo App</h2>
-  <div class="input-container">
-    <input type="text" id="taskInput" placeholder="New task">
-    <button onclick="addTask()" id="addButton">Add Task</button>
+  <div id="todoApp">
+    <h2 id="appTitle">Mini ToDo App</h2>
+    <div class="input-container">
+      <input type="text" id="taskInput" placeholder="New task">
+      <button onclick="addTask()" id="addButton">Add Task</button>
+    </div>
+    <ul id="taskList"></ul>
   </div>
-  <ul id="taskList"></ul>
-</div>
 
   <script>
     // Multi-language translations for Todo App
@@ -34,6 +34,7 @@
         appTitle: "Mini ToDo App",
         taskPlaceholder: "New task",
         addButton: "Add Task",
+        editButton: "Edit",      // ADD THIS LINE
         deleteButton: "Delete",
         noTasks: "No tasks yet. Add your first task!"
       },
@@ -41,6 +42,7 @@
         appTitle: "Mini Application ToDo",
         taskPlaceholder: "Nouvelle tâche",
         addButton: "Ajouter Tâche",
+        editButton: "Modifier",  // ADD THIS LINE
         deleteButton: "Supprimer",
         noTasks: "Aucune tâche pour le moment. Ajoutez votre première tâche!"
       },
@@ -48,6 +50,7 @@
         appTitle: "Mini ToDo App",
         taskPlaceholder: "Neue Aufgabe",
         addButton: "Aufgabe Hinzufügen",
+        editButton: "Bearbeiten", // ADD THIS LINE
         deleteButton: "Löschen",
         noTasks: "Noch keine Aufgaben. Fügen Sie Ihre erste Aufgabe hinzu!"
       },
@@ -55,6 +58,7 @@
         appTitle: "Мини ToDo Приложение",
         taskPlaceholder: "Новая задача",
         addButton: "Добавить Задачу",
+        editButton: "Редактировать", // ADD THIS LINE
         deleteButton: "Удалить",
         noTasks: "Пока нет задач. Добавьте свою первую задачу!"
       }
@@ -66,7 +70,10 @@
       document.getElementById('taskInput').placeholder = translations[lang].taskPlaceholder;
       document.getElementById('addButton').textContent = translations[lang].addButton;
       
-      // Update existing task delete buttons
+      // Update existing task buttons
+      document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.textContent = translations[lang].editButton;
+      });
       document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.textContent = translations[lang].deleteButton;
       });
@@ -94,6 +101,15 @@
       renderTasks();
     }
 
+    // ADD THIS NEW FUNCTION
+    function editTask(index) {
+      const newTaskText = prompt('Edit your task:', tasks[index]);
+      if (newTaskText !== null && newTaskText.trim() !== '') {
+        tasks[index] = newTaskText.trim();
+        renderTasks();
+      }
+    }
+
     function deleteTask(index) {
       tasks.splice(index, 1);
       renderTasks();
@@ -113,6 +129,7 @@
         const li = document.createElement('li');
         li.innerHTML = `
           <span>${task}</span>
+          <button class="edit-btn" onclick="editTask(${index})">${translations[currentLang].editButton}</button>
           <button class="delete-btn" onclick="deleteTask(${index})">${translations[currentLang].deleteButton}</button>
         `;
         taskList.appendChild(li);
